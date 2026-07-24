@@ -55,9 +55,7 @@ public final class MorninggloryClip {
             System.exit(1);
         }
 
-        if (!Boolean.getBoolean("morninggloryclip.disable.auto-update")
-                && !Boolean.getBoolean("hyacinthusclip.disable.auto-update")
-                && !Boolean.getBoolean("leavesclip.disable.auto-update")) {
+        if (!Boolean.getBoolean("morninggloryclip.disable.auto-update")) {
             AutoUpdate.init();
         }
 
