@@ -28,9 +28,7 @@ public class SimpleLogger extends Logger {
     }
 
     private static String formatPlaceholders(String message, Object... params) {
-        if (message == null || params == null || params.length == 0) {
-            return message;
-        }
+        if (message == null || params == null || params.length == 0) return message;
         StringBuilder sb = new StringBuilder();
         int paramIdx = 0, lastIdx = 0;
         for (int i = 0; i < message.length(); i++) {
@@ -41,7 +39,7 @@ public class SimpleLogger extends Logger {
                 } else {
                     sb.append("{}");
                 }
-                i++;
+                i++; // skip '}'
                 lastIdx = i + 1;
             }
         }
@@ -51,9 +49,7 @@ public class SimpleLogger extends Logger {
         if (paramIdx < params.length) {
             sb.append(" [");
             for (int i = paramIdx; i < params.length; i++) {
-                if (i > paramIdx) {
-                    sb.append(", ");
-                }
+                if (i > paramIdx) sb.append(", ");
                 sb.append(params[i]);
             }
             sb.append("]");
@@ -72,18 +68,12 @@ public class SimpleLogger extends Logger {
     }
 
     private Level getDefaultLevel() {
-        if (Boolean.getBoolean("fun.bm.morninggloryclip.log-level.trace")) return Level.TRACE;
-        if (Boolean.getBoolean("fun.bm.morninggloryclip.log-level.debug")) return Level.DEBUG;
-        if (Boolean.getBoolean("fun.bm.morninggloryclip.log-level.info")) return Level.INFO;
-        if (Boolean.getBoolean("fun.bm.morninggloryclip.log-level.warn")) return Level.WARN;
-        if (Boolean.getBoolean("fun.bm.morninggloryclip.log-level.error")) return Level.ERROR;
-        if (Boolean.getBoolean("fun.bm.morninggloryclip.log-level.fatal")) return Level.FATAL;
-        if (Boolean.getBoolean("leavesclip.log-level.trace")) return Level.TRACE;
-        if (Boolean.getBoolean("leavesclip.log-level.debug")) return Level.DEBUG;
-        if (Boolean.getBoolean("leavesclip.log-level.info")) return Level.INFO;
-        if (Boolean.getBoolean("leavesclip.log-level.warn")) return Level.WARN;
-        if (Boolean.getBoolean("leavesclip.log-level.error")) return Level.ERROR;
-        if (Boolean.getBoolean("leavesclip.log-level.fatal")) return Level.FATAL;
+        if (Boolean.getBoolean("morninggloryclip.log-level.trace")) return Level.TRACE;
+        if (Boolean.getBoolean("morninggloryclip.log-level.debug")) return Level.DEBUG;
+        if (Boolean.getBoolean("morninggloryclip.log-level.info")) return Level.INFO;
+        if (Boolean.getBoolean("morninggloryclip.log-level.warn")) return Level.WARN;
+        if (Boolean.getBoolean("morninggloryclip.log-level.error")) return Level.ERROR;
+        if (Boolean.getBoolean("morninggloryclip.log-level.fatal")) return Level.FATAL;
         return Level.INFO;
     }
 
@@ -97,9 +87,7 @@ public class SimpleLogger extends Logger {
 
     @Override
     public void catching(Level level, Throwable t) {
-        if (!isLevelEnabled(level)) {
-            return;
-        }
+        if (!isLevelEnabled(level)) return;
         PrintStream stream = (level == Level.ERROR || level == Level.FATAL) ? err : out;
         stream.println(prefix(level) + "Exception caught:");
         t.printStackTrace(stream);
@@ -112,94 +100,72 @@ public class SimpleLogger extends Logger {
 
     @Override
     public void debug(String message, Object... params) {
-        if (!isLevelEnabled(Level.DEBUG)) {
-            return;
-        }
+        if (!isLevelEnabled(Level.DEBUG)) return;
         out.println(prefix(Level.DEBUG) + formatPlaceholders(message, params));
     }
 
     @Override
     public void debug(String message, Throwable t) {
-        if (!isLevelEnabled(Level.DEBUG)) {
-            return;
-        }
+        if (!isLevelEnabled(Level.DEBUG)) return;
         out.println(prefix(Level.DEBUG) + message);
         t.printStackTrace(out);
     }
 
     public void error(Throwable t, String message, Object... params) {
-        if (!isLevelEnabled(Level.ERROR)) {
-            return;
-        }
+        if (!isLevelEnabled(Level.ERROR)) return;
         err.println(prefix(Level.ERROR) + formatPlaceholders(message, params));
         t.printStackTrace(err);
     }
 
     @Override
     public void error(String message, Object... params) {
-        if (!isLevelEnabled(Level.ERROR)) {
-            return;
-        }
+        if (!isLevelEnabled(Level.ERROR)) return;
         err.println(prefix(Level.ERROR) + formatPlaceholders(message, params));
     }
 
     @Override
     public void error(String message, Throwable t) {
-        if (!isLevelEnabled(Level.ERROR)) {
-            return;
-        }
+        if (!isLevelEnabled(Level.ERROR)) return;
         err.println(prefix(Level.ERROR) + message);
         t.printStackTrace(err);
     }
 
     @Override
     public void fatal(String message, Object... params) {
-        if (!isLevelEnabled(Level.FATAL)) {
-            return;
-        }
+        if (!isLevelEnabled(Level.FATAL)) return;
         err.println(prefix(Level.FATAL) + formatPlaceholders(message, params));
     }
 
     @Override
     public void fatal(String message, Throwable t) {
-        if (!isLevelEnabled(Level.FATAL)) {
-            return;
-        }
+        if (!isLevelEnabled(Level.FATAL)) return;
         err.println(prefix(Level.FATAL) + message);
         t.printStackTrace(err);
     }
 
     @Override
     public void info(String message, Object... params) {
-        if (!isLevelEnabled(Level.INFO)) {
-            return;
-        }
+        if (!isLevelEnabled(Level.INFO)) return;
         out.println(prefix(Level.INFO) + formatPlaceholders(message, params));
     }
 
     @Override
     public void info(String message, Throwable t) {
-        if (!isLevelEnabled(Level.INFO)) {
-            return;
-        }
+        if (!isLevelEnabled(Level.INFO)) return;
         out.println(prefix(Level.INFO) + message);
         t.printStackTrace(out);
     }
 
     @Override
     public void log(Level level, String message, Object... params) {
-        if (!isLevelEnabled(level)) {
-            return;
-        }
+        if (!isLevelEnabled(level)) return;
         PrintStream stream = (level == Level.ERROR || level == Level.FATAL) ? err : out;
         stream.println(prefix(level) + formatPlaceholders(message, params));
     }
 
     @Override
     public void log(Level level, String message, Throwable t) {
-        if (!isLevelEnabled(level)) {
-            return;
-        }
+        if (!isLevelEnabled(level)) return;
         PrintStream stream = (level == Level.ERROR || level == Level.FATAL) ? err : out;
         stream.println(prefix(level) + message);
         t.printStackTrace(stream);
@@ -216,42 +182,32 @@ public class SimpleLogger extends Logger {
 
     @Override
     public void trace(String message, Object... params) {
-        if (!isLevelEnabled(Level.TRACE)) {
-            return;
-        }
+        if (!isLevelEnabled(Level.TRACE)) return;
         out.println(prefix(Level.TRACE) + formatPlaceholders(message, params));
     }
 
     @Override
     public void trace(String message, Throwable t) {
-        if (!isLevelEnabled(Level.TRACE)) {
-            return;
-        }
+        if (!isLevelEnabled(Level.TRACE)) return;
         out.println(prefix(Level.TRACE) + message);
         t.printStackTrace(out);
     }
 
     public void warn(Throwable t, String message, Object... params) {
-        if (!isLevelEnabled(Level.WARN)) {
-            return;
-        }
+        if (!isLevelEnabled(Level.WARN)) return;
         err.println(prefix(Level.WARN) + formatPlaceholders(message, params));
         t.printStackTrace(err);
     }
 
     @Override
     public void warn(String message, Object... params) {
-        if (!isLevelEnabled(Level.WARN)) {
-            return;
-        }
+        if (!isLevelEnabled(Level.WARN)) return;
         out.println(prefix(Level.WARN) + formatPlaceholders(message, params));
     }
 
     @Override
     public void warn(String message, Throwable t) {
-        if (!isLevelEnabled(Level.WARN)) {
-            return;
-        }
+        if (!isLevelEnabled(Level.WARN)) return;
         out.println(prefix(Level.WARN) + message);
         t.printStackTrace(out);
     }

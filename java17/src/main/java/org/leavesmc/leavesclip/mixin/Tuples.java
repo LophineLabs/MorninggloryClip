@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 record Tuple2<A, B>(A first, B second) {
 
     @Contract("_ -> new")
-    public @NotNull Tuple3<A, B, C> plus(C third) {
+    public <C> @NotNull Tuple3<A, B, C> plus(C third) {
         return new Tuple3<>(first, second, third);
     }
 }
@@ -14,7 +14,7 @@ record Tuple2<A, B>(A first, B second) {
 record Tuple3<A, B, C>(A first, B second, C third) {
 
     @Contract("_ -> new")
-    public @NotNull Tuple4<A, B, C, D> plus(D fourth) {
+    public <D> @NotNull Tuple4<A, B, C, D> plus(D fourth) {
         return new Tuple4<>(first, second, third, fourth);
     }
 }

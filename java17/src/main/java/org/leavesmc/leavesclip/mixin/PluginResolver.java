@@ -37,14 +37,10 @@ public class PluginResolver {
 
     public static void extractMixins() {
         File pluginsDir = new File(PLUGIN_DIRECTORY);
-        if (!ensurePluginsDir(pluginsDir)) {
-            return;
-        }
+        if (!ensurePluginsDir(pluginsDir)) return;
 
         File mixinsDir = new File(MIXINS_DIRECTORY);
-        if (!ensureMixinsDir(mixinsDir)) {
-            return;
-        }
+        if (!ensureMixinsDir(mixinsDir)) return;
 
         processPlugins(pluginsDir);
         cleanOutdatedMixinJars(mixinsDir);
@@ -52,10 +48,9 @@ public class PluginResolver {
 
     private static void processPlugins(@NotNull File pluginsDir) {
         File[] jarFiles = pluginsDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".jar"));
-        if (jarFiles == null || jarFiles.length == 0) {
-            return;
-        }
+        if (jarFiles == null || jarFiles.length == 0) return;
 
+        //noinspection DataFlowIssue
         leavesPluginMetas = Arrays.stream(jarFiles)
                 .parallel()
                 .map(PluginResolver::withJarFile)
@@ -77,9 +72,8 @@ public class PluginResolver {
 
     private static void cleanOutdatedMixinJars(@NotNull File mixinsDir) {
         File[] files = mixinsDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".jar"));
-        if (files == null || files.length == 0) {
-            return;
-        }
+        if (files == null || files.length == 0) return;
+        //noinspection ResultOfMethodCallIgnored
         Arrays.stream(files)
                 .parallel()
                 .filter(PluginResolver::isOutdatedMixinJar)
@@ -99,9 +93,7 @@ public class PluginResolver {
             logger.warn("'{}' is not a directory", mixinsDir.getAbsolutePath());
             return false;
         }
-        if (mixinsDir.exists()) {
-            return true;
-        }
+        if (mixinsDir.exists()) return true;
         if (!mixinsDir.mkdirs()) {
             logger.warn("Failed to create mixins directory '{}'", mixinsDir.getAbsolutePath());
             return false;
@@ -120,9 +112,9 @@ public class PluginResolver {
     }
 
     @Contract(pure = true)
-    private static @NotNull <T> Predicate<T> distinctBy(
-            Function<T, ?> keyExtractor,
-            Consumer<T> duplicateHandler
+    private static <T> @NotNull Predicate<T> distinctBy(
+            Function<? super T, ?> keyExtractor,
+            Consumer<? super T> duplicateHandler
     ) {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> {
@@ -148,9 +140,7 @@ public class PluginResolver {
         JarFile jarFile = entry.second();
         LeavesPluginMeta pluginMeta = getPluginMeta(jarFile);
 
-        if (pluginMeta != null) {
-            return entry.plus(pluginMeta);
-        }
+        if (pluginMeta != null) return entry.plus(pluginMeta);
 
         try {
             entry.second().close();
@@ -189,11 +179,9 @@ public class PluginResolver {
         File mixinJarFile = pluginMeta.getMixinJarFile();
 
         String pluginJarHash = calcMd5(pluginFile);
-        if (mixinJarFile.isDirectory()) {
-            throw new IllegalStateException(
-                    "Plugin mixin jar file is a directory. Please delete this: " + mixinJarFile.getAbsolutePath()
-            );
-        }
+        if (mixinJarFile.isDirectory()) throw new IllegalStateException(
+                "Plugin mixin jar file is a directory. Please delete this: " + mixinJarFile.getAbsolutePath()
+        );
         if (mixinJarFile.exists()) {
             String loggedPluginJarHash = getPluginJarHashInMixinJar(mixinJarFile);
             if (pluginJarHash.equals(loggedPluginJarHash)) {
@@ -299,9 +287,8 @@ public class PluginResolver {
         try (InputStream is = Files.newInputStream(file.toPath());
              DigestInputStream dis = new DigestInputStream(is, md)) {
             byte[] buffer = new byte[8192];
-            while (dis.read(buffer) != -1) {
-                // drain
-            }
+            //noinspection StatementWithEmptyBody
+            while (dis.read(buffer) != -1) ;
         } catch (IOException e) {
             logger.warn("Failed to read file '{}'", file.getAbsolutePath());
             return "";

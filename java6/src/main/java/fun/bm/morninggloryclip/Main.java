@@ -21,8 +21,8 @@ public final class Main {
         }
 
         try {
-            final Class<?> hyacinthusclipClass = Class.forName("fun.bm.morninggloryclip.Hyacinthusclip");
-            final Method mainMethod = hyacinthusclipClass.getMethod("main", String[].class);
+            final Class<?> clipClass = Class.forName("fun.bm.morninggloryclip.MorninggloryClip");
+            final Method mainMethod = clipClass.getMethod("main", String[].class);
             mainMethod.invoke(null, (Object) args);
         } catch (final Exception e) {
             e.printStackTrace();

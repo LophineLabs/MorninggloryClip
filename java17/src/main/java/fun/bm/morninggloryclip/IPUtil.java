@@ -14,18 +14,18 @@ import java.util.concurrent.Executors;
 
 class IPUtil {
     protected static String getCountryByIp() {
-        final long timeout = Long.getLong("fun.bm.morninggloryclip.getCountryTimeout", 5) * 1000;
+        final long timeout = Long.getLong("morninggloryclip.getCountryTimeout", 5) * 1000;
         HttpClient client = HttpClient.newHttpClient();
         ExecutorService executor = Executors.newFixedThreadPool(IpApi.values().length);
 
         try {
-            CompletableFuture[] futures = new CompletableFuture[IpApi.values().length];
+            CompletableFuture<String>[] futures = new CompletableFuture[IpApi.values().length];
 
             for (int i = 0; i < IpApi.values().length; i++) {
                 final IpApi api = IpApi.values()[i];
                 futures[i] = CompletableFuture.supplyAsync(() -> {
                     try {
-                        HttpResponse response = client.send(createRequest(api.getUrl()), HttpResponse.BodyHandlers.ofString());
+                        HttpResponse<String> response = client.send(createRequest(api.getUrl()), HttpResponse.BodyHandlers.ofString());
                         if (response.statusCode() >= 300 && response.statusCode() < 400) {
                             String redirectUrl = response.headers().firstValue("Location").orElse(null);
                             if (redirectUrl != null) {
@@ -41,13 +41,11 @@ class IPUtil {
                 }, executor);
             }
 
-            CompletableFuture firstCompleted = CompletableFuture.anyOf(futures);
+            CompletableFuture<Object> firstCompleted = CompletableFuture.anyOf(futures);
 
             long startTime = System.currentTimeMillis();
             while (!firstCompleted.isDone()) {
-                if (System.currentTimeMillis() - startTime > timeout) {
-                    return "Unknown";
-                }
+                if (System.currentTimeMillis() - startTime > timeout) return "Unknown";
                 Thread.sleep(50);
                 firstCompleted = CompletableFuture.anyOf(futures);
             }
@@ -55,7 +53,7 @@ class IPUtil {
             try {
                 String result = (String) firstCompleted.get();
                 if (result != null) {
-                    for (CompletableFuture future : futures) {
+                    for (CompletableFuture<String> future : futures) {
                         future.cancel(true);
                     }
                     return result;
@@ -63,12 +61,12 @@ class IPUtil {
             } catch (Exception ignored) {
             }
 
-            for (CompletableFuture future : futures) {
+            for (CompletableFuture<String> future : futures) {
                 if (future.isDone() && !future.isCompletedExceptionally()) {
                     try {
                         String result = future.getNow(null);
                         if (result != null) {
-                            for (CompletableFuture f : futures) {
+                            for (CompletableFuture<String> f : futures) {
                                 f.cancel(true);
                             }
                             return result;

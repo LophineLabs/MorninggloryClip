@@ -36,9 +36,7 @@ import java.util.concurrent.Executors;
 
 public final class MorninggloryClip {
     private static final boolean ENABLE_LEAVES_PLUGIN =
-            Boolean.getBoolean("fun.bm.morninggloryclip.enable.mixin")
-                    || Boolean.getBoolean("leavesclip.enable.mixin")
-                    || Boolean.getBoolean("hyacinthusclip.enable.mixin");
+            Boolean.getBoolean("morninggloryclip.enable.mixin");
 
     public static final String[] ALL_MAVEN_REPO_LINK_BASE = new String[]{
             "https://maven.aliyun.com/repository/central",
@@ -57,7 +55,7 @@ public final class MorninggloryClip {
             System.exit(1);
         }
 
-        if (!Boolean.getBoolean("fun.bm.morninggloryclip.disable.auto-update")
+        if (!Boolean.getBoolean("morninggloryclip.disable.auto-update")
                 && !Boolean.getBoolean("hyacinthusclip.disable.auto-update")
                 && !Boolean.getBoolean("leavesclip.disable.auto-update")) {
             AutoUpdate.init();
@@ -138,7 +136,7 @@ public final class MorninggloryClip {
 
     private static URL @NotNull [] setupClasspath() {
         final var repoDir = Path.of(System.getProperty("bundlerRepoDir", ""));
-        final boolean onlyUseMojangSource = Boolean.getBoolean("fun.bm.morninggloryclip.useMojangSource");
+        final boolean onlyUseMojangSource = Boolean.getBoolean("morninggloryclip.useMojangSource");
 
         final PatchEntry[] patches = findPatches();
         final Path baseFile;
@@ -165,9 +163,7 @@ public final class MorninggloryClip {
 
         final Map<String, Map<String, URL>> classpathUrls = extractAndApplyPatches(baseFile, patches, repoDir);
 
-        if (Boolean.getBoolean("paperclip.patchonly")
-                || Boolean.getBoolean("fun.bm.morninggloryclip.patchonly")
-                || Boolean.getBoolean("hyacinthusclip.patchonly")) {
+        if (Boolean.getBoolean("paperclip.patchonly")) {
             System.exit(0);
         }
 
@@ -222,7 +218,7 @@ public final class MorninggloryClip {
 
     private static @NotNull String getDownloadContextFileName(boolean ignoreCountry) {
         final String base = "download-context";
-        final String customized = System.getProperty("fun.bm.morninggloryclip.downloadContext");
+        final String customized = System.getProperty("morninggloryclip.downloadContext");
 
         if (ignoreCountry) {
             return base;

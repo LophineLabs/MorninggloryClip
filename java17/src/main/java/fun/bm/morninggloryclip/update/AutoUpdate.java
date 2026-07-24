@@ -87,10 +87,7 @@ public final class AutoUpdate {
     }
 
     private static boolean detectionMorninggloryClipVersion() {
-        if (Boolean.getBoolean("fun.bm.morninggloryclip.skip-version-check")
-                || Boolean.getBoolean("fun.bm.morninggloryclip.skip-morninggloryclip-version-check")
-                || Boolean.getBoolean("hyacinthusclip.skip-version-check")
-                || Boolean.getBoolean("hyacinthusclip.skip-hyacinthusclip-version-check")) {
+        if (Boolean.getBoolean("morninggloryclip.skip-version-check")) {
             return true;
         }
 

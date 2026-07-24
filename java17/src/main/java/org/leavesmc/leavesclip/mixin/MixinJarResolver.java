@@ -18,14 +18,10 @@ public class MixinJarResolver {
     public static URL[] jarUrls = new URL[]{};
 
     public static void resolveMixinJars() {
-        if (PluginResolver.leavesPluginMetas.isEmpty()) {
-            return;
-        }
+        if (PluginResolver.leavesPluginMetas.isEmpty()) return;
 
         URL[] urls = getMixinJarUrls();
-        if (urls == null) {
-            return;
-        }
+        if (urls == null) return;
         jarUrls = urls;
 
         resolveMixinConfigs();

@@ -9,7 +9,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-class Util {
+public class Util {
 
     private Util() {
     }
@@ -126,7 +126,7 @@ class Util {
         throw (X) ex;
     }
 
-    static String endingSlash(final String dir) {
+    public static String endingSlash(final String dir) {
         if (dir.endsWith("/")) {
             return dir;
         }

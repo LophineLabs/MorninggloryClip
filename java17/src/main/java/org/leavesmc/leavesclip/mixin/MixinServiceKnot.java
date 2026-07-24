@@ -1,3 +1,21 @@
+/*
+ * Copyright 2016 FabricMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+// This file contains code derived from fabric-loader under the Apache-2.0 license
+// Modified for Leavesclip: removed code related to fabric-loader environment and implemented our own functionality
+
 package org.leavesmc.leavesclip.mixin;
 
 import fun.bm.morninggloryclip.MorninggloryClip;
@@ -32,9 +50,7 @@ public class MixinServiceKnot implements IMixinService, IClassProvider, IClassBy
     public byte[] getClassBytes(@NotNull String name, boolean ignored) throws ClassNotFoundException, IOException {
         String resource = name.replace('.', '/') + ".class";
         try (InputStream is = classLoader.getResourceAsStream(resource)) {
-            if (is == null) {
-                throw new ClassNotFoundException(name);
-            }
+            if (is == null) throw new ClassNotFoundException(name);
             return is.readAllBytes();
         }
     }
@@ -59,6 +75,8 @@ public class MixinServiceKnot implements IMixinService, IClassProvider, IClassBy
 
     @Override
     public URL[] getClassPath() {
+        // Mixin 0.7.x only uses getClassPath() to find itself; we implement CodeSource correctly,
+        // so this is unnecessary.
         return new URL[0];
     }
 
@@ -195,6 +213,7 @@ public class MixinServiceKnot implements IMixinService, IClassProvider, IClassBy
                 return false;
             }
         }
+        // 默认无法判断
         return false;
     }
 
@@ -209,7 +228,7 @@ public class MixinServiceKnot implements IMixinService, IClassProvider, IClassBy
     }
 
     @Override
-    public Collection<? extends ITransformer> getDelegatedTransformers() {
+    public Collection<ITransformer> getDelegatedTransformers() {
         return Collections.emptyList();
     }
 
