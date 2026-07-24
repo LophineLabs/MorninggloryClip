@@ -1,4 +1,4 @@
-package io.papermc.paperclip;
+package fun.bm.morninggloryclip;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

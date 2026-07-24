@@ -1,4 +1,6 @@
-package io.papermc.paperclip;
+package fun.bm.morninggloryclip;
+
+import fun.bm.morninggloryclip.update.AutoUpdate;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +15,8 @@ import java.util.Arrays;
 
 class Util {
 
-    private Util() {}
+    private Util() {
+    }
 
     public static MessageDigest sha256Digest = getSha256Digest();
 
@@ -35,8 +38,6 @@ class Util {
 
     static byte[] readFully(final InputStream in) throws IOException {
         try (in) {
-            // In a test this was 12 ms quicker than a ByteBuffer
-            // and for some reason that matters here.
             byte[] buffer = new byte[16 * 1024];
             int off = 0;
             int read;
@@ -50,6 +51,11 @@ class Util {
         }
     }
 
+    /**
+     * Read a launcher resource as text, routing the lookup through {@link AutoUpdate} so a
+     * separately downloaded target jar (configured via {@code auto_update/core.path}) can
+     * serve patched resources. Falls back to the local classpath when no target jar is set.
+     */
     static String readResourceText(final String path) throws IOException {
         final String p;
         if (path.startsWith("/")) {
@@ -57,7 +63,8 @@ class Util {
         } else {
             p = "/" + path;
         }
-        final InputStream stream = Util.class.getResourceAsStream(p);
+
+        final InputStream stream = AutoUpdate.getResourceAsStreamFromTargetJar(p);
         if (stream == null) {
             return null;
         }
@@ -74,6 +81,7 @@ class Util {
     static boolean isDataValid(final byte[] data, final byte[] hash) {
         return Arrays.equals(hash, sha256Digest.digest(data));
     }
+
     static boolean isFileValid(final Path file, final byte[] hash) {
         if (Files.exists(file)) {
             final byte[] fileBytes = readBytes(file);

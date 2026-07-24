@@ -12,25 +12,26 @@ subprojects {
     }
 }
 
-val mainClass = "io.papermc.paperclip.Main"
+val mainClass = "fun.bm.morninggloryclip.Main"
 
 tasks.jar {
     val java6Jar = project(":java6").tasks.named("jar")
-    val java17Jar = project(":java17").tasks.named("shadowJar")
-    dependsOn(java6Jar, java17Jar)
+    val java25Jar = project(":java25").tasks.named("shadowJar")
+    dependsOn(java6Jar, java25Jar)
 
     from(zipTree(java6Jar.map { it.outputs.files.singleFile }))
-    from(zipTree(java17Jar.map { it.outputs.files.singleFile }))
+    from(zipTree(java25Jar.map { it.outputs.files.singleFile }))
 
     manifest {
         attributes(
-            "Main-Class" to mainClass
+            "Main-Class" to mainClass,
+            "MorninggloryClip-Version" to project.version.toString()
         )
     }
 
     from(file("license.txt")) {
         into("META-INF/license")
-        rename { "paperclip-LICENSE.txt" }
+        rename { "morninggloryclip-LICENSE.txt" }
     }
     rename { name ->
         if (name.endsWith("-LICENSE.txt")) {
@@ -41,13 +42,34 @@ tasks.jar {
     }
 }
 
+// Write the version string as a jar resource so AutoUpdate.getResourceAsStreamFromTargetJar
+// can read it from /META-INF/morninggloryclip-version. Without this file, the auto-update
+// indirection aborts because both jars must agree on the launcher version.
+val writeVersionResource by tasks.registering {
+    val versionFile = layout.buildDirectory.file("generated-resources/morninggloryclip-version")
+    outputs.file(versionFile)
+    doLast {
+        val f = versionFile.get().asFile
+        f.parentFile.mkdirs()
+        f.writeText(project.version.toString())
+    }
+}
+
+tasks.named("jar") {
+    dependsOn(writeVersionResource)
+    from(writeVersionResource) {
+        into("META-INF")
+        rename { "morninggloryclip-version" }
+    }
+}
+
 val sourcesJar by tasks.registering(Jar::class) {
     val java6Sources = project(":java6").tasks.named("sourcesJar")
-    val java17Sources = project(":java17").tasks.named("sourcesJar")
-    dependsOn(java6Sources, java17Sources)
+    val java25Sources = project(":java25").tasks.named("sourcesJar")
+    dependsOn(java6Sources, java25Sources)
 
     from(zipTree(java6Sources.map { it.outputs.files.singleFile }))
-    from(zipTree(java17Sources.map { it.outputs.files.singleFile }))
+    from(zipTree(java25Sources.map { it.outputs.files.singleFile }))
 
     archiveClassifier.set("sources")
 }
@@ -66,10 +88,10 @@ publishing {
             withoutBuildIdentifier()
 
             pom {
-                val repoPath = "PaperMC/Paperclip"
+                val repoPath = "LophineLabs/MorninggloryClip"
                 val repoUrl = "https://github.com/$repoPath"
 
-                name.set("Paperclip")
+                name.set("MorninggloryClip")
                 description.set(project.description)
                 url.set(repoUrl)
                 packaging = "jar"

@@ -7,12 +7,14 @@
  * MIT License
  */
 
-package io.papermc.paperclip;
+package fun.bm.morninggloryclip;
 
+import fun.bm.morninggloryclip.update.AutoUpdate;
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.Patch;
+import org.apache.commons.compress.compressors.CompressorException;
+
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
-import org.apache.commons.compress.compressors.CompressorException;
 
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -93,9 +94,7 @@ record PatchEntry(
         final Path inputFile = inputDir.resolve(this.originalPath);
         final Path outputFile = targetDir.resolve(this.outputPath);
 
-        // Short-cut if the patch is already applied
         if (Files.exists(outputFile) && Util.isFileValid(outputFile, this.outputHash)) {
-            // For the classpath, use the patched file instead of the original
             urls.get(this.location).put(this.originalPath, outputFile.toUri().toURL());
             return;
         }
@@ -105,7 +104,6 @@ record PatchEntry(
             announced = true;
         }
 
-        // Verify input file is correct
         if (Files.notExists(inputFile)) {
             throw new IllegalStateException("Input file not found: " + inputFile);
         }
@@ -113,9 +111,8 @@ record PatchEntry(
             throw new IllegalStateException("Hash check of input file failed for " + inputFile);
         }
 
-        // Get and verity patch data is correct
         final String fullPatchPath = "/META-INF/" + Util.endingSlash(this.location) + this.patchPath;
-        final InputStream patchStream = PatchEntry.class.getResourceAsStream(fullPatchPath);
+        final InputStream patchStream = AutoUpdate.getResourceAsStreamFromTargetJar(fullPatchPath);
         if (patchStream == null) {
             throw new IllegalStateException("Patch file not found: " + fullPatchPath);
         }
@@ -136,8 +133,6 @@ record PatchEntry(
                 Patch.patch(originalBytes, patchBytes, outStream);
             }
         } catch (final CompressorException | InvalidHeaderException | IOException e) {
-            // Don't move this `catch` clause to the outer try-with-resources
-            // the Util.fail method never returns, so `close()` would never get called
             throw Util.fail("Failed to patch " + inputFile, e);
         }
 
@@ -145,7 +140,6 @@ record PatchEntry(
             throw new IllegalStateException("Patch not applied correctly for " + this.outputPath);
         }
 
-        // For the classpath, use the patched file instead of the original
         urls.get(this.location).put(this.originalPath, outputFile.toUri().toURL());
     }
 }
