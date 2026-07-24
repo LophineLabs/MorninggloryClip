@@ -57,22 +57,22 @@ public class PluginResolver {
         }
 
         leavesPluginMetas = Arrays.stream(jarFiles)
-            .parallel()
-            .map(PluginResolver::withJarFile)
-            .filter(PluginResolver::notNull)
-            .map(PluginResolver::withPluginMeta)
-            .filter(PluginResolver::notNull)
-            .filter(distinctBy(
-                entry -> entry.third().getName(),
-                entry -> logger.warn(
-                    "The plugin '{}' has duplicate name with another plugin, its mixin will not load. path: '{}'",
-                    entry.third().getName(),
-                    entry.first().getAbsolutePath()
-                )
-            ))
-            .map(PluginResolver::extractMixinJarAndToPluginMeta)
-            .filter(PluginResolver::notNull)
-            .toList();
+                .parallel()
+                .map(PluginResolver::withJarFile)
+                .filter(PluginResolver::notNull)
+                .map(PluginResolver::withPluginMeta)
+                .filter(PluginResolver::notNull)
+                .filter(distinctBy(
+                        entry -> entry.third().getName(),
+                        entry -> logger.warn(
+                                "The plugin '{}' has duplicate name with another plugin, its mixin will not load. path: '{}'",
+                                entry.third().getName(),
+                                entry.first().getAbsolutePath()
+                        )
+                ))
+                .map(PluginResolver::extractMixinJarAndToPluginMeta)
+                .filter(PluginResolver::notNull)
+                .toList();
     }
 
     private static void cleanOutdatedMixinJars(@NotNull File mixinsDir) {
@@ -81,9 +81,9 @@ public class PluginResolver {
             return;
         }
         Arrays.stream(files)
-            .parallel()
-            .filter(PluginResolver::isOutdatedMixinJar)
-            .forEach(File::delete);
+                .parallel()
+                .filter(PluginResolver::isOutdatedMixinJar)
+                .forEach(File::delete);
     }
 
     private static boolean ensurePluginsDir(@NotNull File pluginsDir) {
@@ -115,14 +115,14 @@ public class PluginResolver {
 
     private static boolean isOutdatedMixinJar(@NotNull File jar) {
         return leavesPluginMetas.stream()
-            .map(LeavesPluginMeta::getMixinJarFile)
-            .noneMatch(jar::equals);
+                .map(LeavesPluginMeta::getMixinJarFile)
+                .noneMatch(jar::equals);
     }
 
     @Contract(pure = true)
     private static @NotNull <T> Predicate<T> distinctBy(
-        Function<T, ?> keyExtractor,
-        Consumer<T> duplicateHandler
+            Function<T, ?> keyExtractor,
+            Consumer<T> duplicateHandler
     ) {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> {
@@ -176,7 +176,7 @@ public class PluginResolver {
     }
 
     private static @Nullable LeavesPluginMeta extractMixinJarAndToPluginMeta(
-        @NotNull Tuple3<File, JarFile, LeavesPluginMeta> entry
+            @NotNull Tuple3<File, JarFile, LeavesPluginMeta> entry
     ) {
         File pluginFile = entry.first();
         JarFile jarFile = entry.second();
@@ -191,7 +191,7 @@ public class PluginResolver {
         String pluginJarHash = calcMd5(pluginFile);
         if (mixinJarFile.isDirectory()) {
             throw new IllegalStateException(
-                "Plugin mixin jar file is a directory. Please delete this: " + mixinJarFile.getAbsolutePath()
+                    "Plugin mixin jar file is a directory. Please delete this: " + mixinJarFile.getAbsolutePath()
             );
         }
         if (mixinJarFile.exists()) {
@@ -203,10 +203,10 @@ public class PluginResolver {
         }
 
         if (extractMixinJar(
-            jarFile,
-            pluginJarHash,
-            mixinJarFile,
-            pluginMeta
+                jarFile,
+                pluginJarHash,
+                mixinJarFile,
+                pluginMeta
         )) {
             return pluginMeta;
         } else {
@@ -215,10 +215,10 @@ public class PluginResolver {
     }
 
     private static boolean extractMixinJar(
-        @NotNull JarFile pluginJar,
-        @NotNull String pluginJarHash,
-        @NotNull File jarFile,
-        @NotNull LeavesPluginMeta pluginMeta
+            @NotNull JarFile pluginJar,
+            @NotNull String pluginJarHash,
+            @NotNull File jarFile,
+            @NotNull LeavesPluginMeta pluginMeta
     ) {
         LeavesPluginMeta.MixinConfig mixin = pluginMeta.getMixin();
         try (JarOutputStream outputStream = new JarOutputStream(new FileOutputStream(jarFile))) {
@@ -274,14 +274,14 @@ public class PluginResolver {
         if (file.exists()) {
             if (!file.delete()) {
                 throw new IllegalStateException(
-                    "Failed to delete file '" + file.getAbsolutePath() + "'"
+                        "Failed to delete file '" + file.getAbsolutePath() + "'"
                 );
             }
         }
         try {
             if (!file.createNewFile()) {
                 throw new IllegalStateException(
-                    "Failed to create new file '" + file.getAbsolutePath() + "'"
+                        "Failed to create new file '" + file.getAbsolutePath() + "'"
                 );
             }
         } catch (IOException e) {

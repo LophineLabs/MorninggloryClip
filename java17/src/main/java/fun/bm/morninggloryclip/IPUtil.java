@@ -88,9 +88,9 @@ class IPUtil {
 
     private static HttpRequest createRequest(String url) {
         return HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .timeout(Duration.ofSeconds(5))
-            .build();
+                .uri(URI.create(url))
+                .timeout(Duration.ofSeconds(5))
+                .build();
     }
 
     private enum IpApi {

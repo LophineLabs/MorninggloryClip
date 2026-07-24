@@ -16,11 +16,11 @@ val mainClass = "fun.bm.morninggloryclip.Main"
 
 tasks.jar {
     val java6Jar = project(":java6").tasks.named("jar")
-    val java25Jar = project(":java25").tasks.named("shadowJar")
-    dependsOn(java6Jar, java25Jar)
+    val java17Jar = project(":java17").tasks.named("shadowJar")
+    dependsOn(java6Jar, java17Jar)
 
     from(zipTree(java6Jar.map { it.outputs.files.singleFile }))
-    from(zipTree(java25Jar.map { it.outputs.files.singleFile }))
+    from(zipTree(java17Jar.map { it.outputs.files.singleFile }))
 
     manifest {
         attributes(
@@ -29,6 +29,10 @@ tasks.jar {
         )
     }
 
+    from(file("license.txt")) {
+        into("META-INF/license")
+        rename { "paperclip-LICENSE.txt" }
+    }
     from(file("license.txt")) {
         into("META-INF/license")
         rename { "morninggloryclip-LICENSE.txt" }
@@ -42,34 +46,13 @@ tasks.jar {
     }
 }
 
-// Write the version string as a jar resource so AutoUpdate.getResourceAsStreamFromTargetJar
-// can read it from /META-INF/morninggloryclip-version. Without this file, the auto-update
-// indirection aborts because both jars must agree on the launcher version.
-val writeVersionResource by tasks.registering {
-    val versionFile = layout.buildDirectory.file("generated-resources/morninggloryclip-version")
-    outputs.file(versionFile)
-    doLast {
-        val f = versionFile.get().asFile
-        f.parentFile.mkdirs()
-        f.writeText(project.version.toString())
-    }
-}
-
-tasks.named("jar") {
-    dependsOn(writeVersionResource)
-    from(writeVersionResource) {
-        into("META-INF")
-        rename { "morninggloryclip-version" }
-    }
-}
-
 val sourcesJar by tasks.registering(Jar::class) {
     val java6Sources = project(":java6").tasks.named("sourcesJar")
-    val java25Sources = project(":java25").tasks.named("sourcesJar")
-    dependsOn(java6Sources, java25Sources)
+    val java17Sources = project(":java17").tasks.named("sourcesJar")
+    dependsOn(java6Sources, java17Sources)
 
     from(zipTree(java6Sources.map { it.outputs.files.singleFile }))
-    from(zipTree(java25Sources.map { it.outputs.files.singleFile }))
+    from(zipTree(java17Sources.map { it.outputs.files.singleFile }))
 
     archiveClassifier.set("sources")
 }
@@ -116,6 +99,18 @@ publishing {
                         email.set("demonwav@gmail.com")
                         url.set("https://github.com/DemonWav")
                     }
+                    developer {
+                        id.set("Suisuroru")
+                        name.set("Helvetica_Volubi")
+                        email.set("suisuroru@blue-millennium.fun")
+                        url.set("https://github.com/Suisuroru")
+                    }
+                    developer {
+                        id.set("xiaoxijun")
+                        name.set("Bacteria")
+                        email.set("a3167717663@hotmail.com")
+                        url.set("https://github.com/Bacteriawa")
+                    }
                 }
 
                 scm {
@@ -128,14 +123,17 @@ publishing {
 
         repositories {
             val url = if (isSnapshot) {
-                "https://artifactory.papermc.io/artifactory/snapshots/"
+                "https://repo.menthamc.org/repository/maven-snapshots/"
             } else {
-                "https://artifactory.papermc.io/artifactory/releases/"
+                "https://repo.menthamc.org/repository/maven-releases/"
             }
 
             maven(url) {
-                credentials(PasswordCredentials::class)
-                name = "paper"
+                name = "MenthaMC"
+                credentials(PasswordCredentials::class) {
+                    username = System.getenv("PRIVATE_MAVEN_REPO_USERNAME")
+                    password = System.getenv("PRIVATE_MAVEN_REPO_PASSWORD")
+                }
             }
         }
     }

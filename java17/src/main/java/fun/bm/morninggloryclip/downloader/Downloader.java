@@ -1,7 +1,7 @@
 package fun.bm.morninggloryclip.downloader;
 
 import fun.bm.morninggloryclip.FileEntry;
-import fun.bm.morninggloryclip.Hyacinthusclip;
+import fun.bm.morninggloryclip.MorninggloryClip;
 import fun.bm.morninggloryclip.Util;
 import fun.bm.morninggloryclip.update.AutoUpdate;
 import org.jetbrains.annotations.Contract;
@@ -20,12 +20,10 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static java.nio.file.StandardOpenOption.WRITE;
+import static java.nio.file.StandardOpenOption.*;
 
 public record Downloader(FileEntry entry, Path outputDir, Path outputFile, String baseDir, Path originalRootDir,
-                        boolean useInternal) {
+                         boolean useInternal) {
     private static final SimpleLogger logger = new SimpleLogger("MorninggloryClip");
 
     @Contract("_ -> new")
@@ -64,8 +62,8 @@ public record Downloader(FileEntry entry, Path outputDir, Path outputFile, Strin
                 this.deleteIfInvalid();
 
                 final MavenDependencyResolver resolver = new MavenDependencyResolver(
-                    List.of(Arrays.stream(Hyacinthusclip.ALL_MAVEN_REPO_LINK_BASE).map(url -> new MavenDependencyResolver.MavenRepository(String.valueOf(url.hashCode()), url)).toArray(MavenDependencyResolver.MavenRepository[]::new)),
-                    this.outputDir
+                        List.of(Arrays.stream(MorninggloryClip.ALL_MAVEN_REPO_LINK_BASE).map(url -> new MavenDependencyResolver.MavenRepository(String.valueOf(url.hashCode()), url)).toArray(MavenDependencyResolver.MavenRepository[]::new)),
+                        this.outputDir
                 );
 
                 resolver.downloadTo(this.entry.id(), this.outputFile);
@@ -87,9 +85,9 @@ public record Downloader(FileEntry entry, Path outputDir, Path outputFile, Strin
 
     private void write(InputStream in) throws IOException {
         try (
-            final InputStream stream = in;
-            final ReadableByteChannel inputChannel = Channels.newChannel(stream);
-            final FileChannel outputChannel = FileChannel.open(this.outputFile, CREATE, WRITE, TRUNCATE_EXISTING)
+                final InputStream stream = in;
+                final ReadableByteChannel inputChannel = Channels.newChannel(stream);
+                final FileChannel outputChannel = FileChannel.open(this.outputFile, CREATE, WRITE, TRUNCATE_EXISTING)
         ) {
             outputChannel.transferFrom(inputChannel, 0, Long.MAX_VALUE);
         }

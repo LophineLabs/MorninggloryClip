@@ -45,12 +45,12 @@ public record FileEntry(byte[] hash, String id, String path) {
     }
 
     public CompletableFuture<Path> downloadFromMvnRepo(
-        final Map<String, URL> urls,
-        final PatchEntry @NotNull [] patches,
-        final String targetName,
-        final Path originalRootDir,
-        final String baseDir,
-        final Path outputDir
+            final Map<String, URL> urls,
+            final PatchEntry @NotNull [] patches,
+            final String targetName,
+            final Path originalRootDir,
+            final String baseDir,
+            final Path outputDir
     ) throws IOException {
         for (final PatchEntry patch : patches) {
             if (patch.location().equals(targetName) && patch.outputPath().equals(this.path)) {
@@ -64,10 +64,10 @@ public record FileEntry(byte[] hash, String id, String path) {
             return CompletableFuture.completedFuture(null);
         }
 
-        Hyacinthusclip.logger.info("Downloading missing file " + this.id + " to " + outputFile + " .");
+        MorninggloryClip.logger.info("Downloading missing file " + this.id + " to " + outputFile + " .");
 
         final @NotNull CompletableFuture<Path> task = new Downloader(this, outputDir, outputFile, baseDir, originalRootDir, true)
-            .downloadOrLoad(Hyacinthusclip.DOWNLOAD_EXECUTOR);
+                .downloadOrLoad(MorninggloryClip.DOWNLOAD_EXECUTOR);
 
         return task.thenApply(ret -> {
             synchronized (urls) {

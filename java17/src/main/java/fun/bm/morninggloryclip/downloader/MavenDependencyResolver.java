@@ -7,24 +7,13 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MavenDependencyResolver {
@@ -147,8 +136,8 @@ public class MavenDependencyResolver {
             }
 
             if (packagingType.contains("plugin") ||
-                packagingType.contains("bundle") ||
-                packagingType.contains("osgi")) {
+                    packagingType.contains("bundle") ||
+                    packagingType.contains("osgi")) {
                 return "jar";
             }
 
@@ -401,7 +390,7 @@ public class MavenDependencyResolver {
         @Override
         public String toString() {
             return String.format("Downloaded: %s\nFrom: %s\nTo: %s\nSize: %s\nCached: %s",
-                coordinate, repository, filePath.toAbsolutePath(), formatBytes(fileSize), fromCache);
+                    coordinate, repository, filePath.toAbsolutePath(), formatBytes(fileSize), fromCache);
         }
 
         private String formatBytes(long bytes) {
@@ -457,8 +446,8 @@ public class MavenDependencyResolver {
 
     public DownloadResult download(String coordinate, Path outputDir, Path fileName) throws IOException {
         return download(coordinate, DownloadOptions.defaults()
-            .outputDirectory(outputDir)
-            .fileName(fileName));
+                .outputDirectory(outputDir)
+                .fileName(fileName));
     }
 
     public DownloadResult downloadTo(String coordinate, Path fullPath) throws IOException {
@@ -498,7 +487,7 @@ public class MavenDependencyResolver {
 
                     String extension = coordinate.getFileExtension();
                     logger.info("Resolved packaging: " + coordinate.packaging +
-                        " (file extension: ." + extension + ")");
+                            " (file extension: ." + extension + ")");
 
                     if (coordinate.classifier == null && pomInfo.classifier != null) {
                         coordinate.classifier = pomInfo.classifier;
@@ -520,11 +509,11 @@ public class MavenDependencyResolver {
                     return new DownloadResult(outputPath, repo, coordinate, false);
                 } catch (IOException e) {
                     if (options.fallbackToJar &&
-                        !coordinate.getFileExtension().equals("jar") &&
-                        coordinate.packaging != null) {
+                            !coordinate.getFileExtension().equals("jar") &&
+                            coordinate.packaging != null) {
 
                         logger.info("Failed with ." + coordinate.getFileExtension() +
-                            ", trying .jar fallback...");
+                                ", trying .jar fallback...");
 
                         String originalPackaging = coordinate.packaging;
                         coordinate.packaging = "jar";
@@ -537,7 +526,7 @@ public class MavenDependencyResolver {
                         try {
                             downloadFile(fallbackUrl, outputPath);
                             logger.info("Downloaded to: " + outputPath.toAbsolutePath() +
-                                " (using .jar fallback)");
+                                    " (using .jar fallback)");
                             return new DownloadResult(outputPath, repo, coordinate, false);
                         } catch (IOException fallbackException) {
                             coordinate.packaging = originalPackaging;
@@ -557,7 +546,7 @@ public class MavenDependencyResolver {
         }
 
         throw new IOException("Failed to download from all repositories. Last error: " +
-            (lastException != null ? lastException.getMessage() : "Unknown"));
+                (lastException != null ? lastException.getMessage() : "Unknown"));
     }
 
     public List<DownloadResult> downloadBatch(List<String> coordinates, DownloadOptions options) throws IOException {
@@ -620,16 +609,16 @@ public class MavenDependencyResolver {
         if (!options.preferredRepos.isEmpty()) {
             for (String repoId : options.preferredRepos) {
                 repositories.stream()
-                    .filter(r -> r.id.equals(repoId) && r.supports(coordinate.isSnapshot))
-                    .findFirst()
-                    .ifPresent(result::add);
+                        .filter(r -> r.id.equals(repoId) && r.supports(coordinate.isSnapshot))
+                        .findFirst()
+                        .ifPresent(result::add);
             }
         }
 
         repositories.stream()
-            .filter(r -> r.supports(coordinate.isSnapshot))
-            .filter(r -> !result.contains(r))
-            .forEach(result::add);
+                .filter(r -> r.supports(coordinate.isSnapshot))
+                .filter(r -> !result.contains(r))
+                .forEach(result::add);
 
         return result;
     }
@@ -845,7 +834,7 @@ public class MavenDependencyResolver {
         }
 
         try (BufferedReader reader = new BufferedReader(
-            new InputStreamReader(connection.getInputStream()))) {
+                new InputStreamReader(connection.getInputStream()))) {
             return reader.lines().collect(Collectors.joining("\n"));
         }
     }

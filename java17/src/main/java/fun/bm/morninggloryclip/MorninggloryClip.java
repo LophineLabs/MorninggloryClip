@@ -5,12 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.leavesmc.leavesclip.logger.Logger;
 import org.leavesmc.leavesclip.logger.SimpleLogger;
-import org.leavesmc.leavesclip.mixin.AccessWidenerManager;
-import org.leavesmc.leavesclip.mixin.MixinJarResolver;
-import org.leavesmc.leavesclip.mixin.MixinServiceKnot;
-import org.leavesmc.leavesclip.mixin.MixinServiceKnotBootstrap;
-import org.leavesmc.leavesclip.mixin.MixinURLClassLoader;
-import org.leavesmc.leavesclip.mixin.PluginResolver;
+import org.leavesmc.leavesclip.mixin.*;
 import org.leavesmc.leavesclip.mixin.plugins.condition.BuildInfoInjector;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.FabricUtil;
@@ -39,17 +34,17 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public final class Hyacinthusclip {
+public final class MorninggloryClip {
     private static final boolean ENABLE_LEAVES_PLUGIN =
-        Boolean.getBoolean("fun.bm.morninggloryclip.enable.mixin")
-            || Boolean.getBoolean("leavesclip.enable.mixin")
-            || Boolean.getBoolean("hyacinthusclip.enable.mixin");
+            Boolean.getBoolean("fun.bm.morninggloryclip.enable.mixin")
+                    || Boolean.getBoolean("leavesclip.enable.mixin")
+                    || Boolean.getBoolean("hyacinthusclip.enable.mixin");
 
-    public static final String[] ALL_MAVEN_REPO_LINK_BASE = new String[] {
-        "https://maven.aliyun.com/repository/central",
-        "https://repo.papermc.io/repository/maven-public",
-        "https://repo.menthamc.org/repository/maven-public",
-        "https://repo.spongepowered.org/maven",
+    public static final String[] ALL_MAVEN_REPO_LINK_BASE = new String[]{
+            "https://maven.aliyun.com/repository/central",
+            "https://repo.papermc.io/repository/maven-public",
+            "https://repo.menthamc.org/repository/maven-public",
+            "https://repo.spongepowered.org/maven",
     };
 
     public static final Executor DOWNLOAD_EXECUTOR = Executors.newCachedThreadPool();
@@ -63,8 +58,8 @@ public final class Hyacinthusclip {
         }
 
         if (!Boolean.getBoolean("fun.bm.morninggloryclip.disable.auto-update")
-            && !Boolean.getBoolean("hyacinthusclip.disable.auto-update")
-            && !Boolean.getBoolean("leavesclip.disable.auto-update")) {
+                && !Boolean.getBoolean("hyacinthusclip.disable.auto-update")
+                && !Boolean.getBoolean("leavesclip.disable.auto-update")) {
             AutoUpdate.init();
         }
 
@@ -92,8 +87,8 @@ public final class Hyacinthusclip {
             final URL[] classpathUrls = Arrays.copyOf(setupClasspathUrls, setupClasspathUrls.length + MixinJarResolver.jarUrls.length);
             System.arraycopy(MixinJarResolver.jarUrls, 0, classpathUrls, setupClasspathUrls.length, MixinJarResolver.jarUrls.length);
 
-            final ClassLoader parentClassLoader = Hyacinthusclip.class.getClassLoader();
-            MixinServiceKnot.classLoader = Hyacinthusclip.class.getClassLoader();
+            final ClassLoader parentClassLoader = MorninggloryClip.class.getClassLoader();
+            MixinServiceKnot.classLoader = MorninggloryClip.class.getClassLoader();
 
             MixinBootstrap.init();
             MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.SERVER);
@@ -119,7 +114,7 @@ public final class Hyacinthusclip {
 
             return createdClassLoader;
         } else {
-            return new URLClassLoader(setupClasspathUrls, Hyacinthusclip.class.getClassLoader().getParent());
+            return new URLClassLoader(setupClasspathUrls, MorninggloryClip.class.getClassLoader().getParent());
         }
     }
 
@@ -128,8 +123,8 @@ public final class Hyacinthusclip {
             try {
                 final Class mainClass = Class.forName(mainClassName, true, classLoader);
                 final MethodHandle mainHandle = MethodHandles.lookup()
-                    .findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class))
-                    .asFixedArity();
+                        .findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class))
+                        .asFixedArity();
                 mainHandle.invoke(args);
             } catch (final Throwable t) {
                 throw Util.sneakyThrow(t);
@@ -171,8 +166,8 @@ public final class Hyacinthusclip {
         final Map<String, Map<String, URL>> classpathUrls = extractAndApplyPatches(baseFile, patches, repoDir);
 
         if (Boolean.getBoolean("paperclip.patchonly")
-            || Boolean.getBoolean("fun.bm.morninggloryclip.patchonly")
-            || Boolean.getBoolean("hyacinthusclip.patchonly")) {
+                || Boolean.getBoolean("fun.bm.morninggloryclip.patchonly")
+                || Boolean.getBoolean("hyacinthusclip.patchonly")) {
             System.exit(0);
         }
 
@@ -242,8 +237,8 @@ public final class Hyacinthusclip {
 
         final String country = IPUtil.getCountryByIp();
         if (country.equalsIgnoreCase("China")
-            || country.equalsIgnoreCase("CN")
-            || country.equalsIgnoreCase("PRC")) {
+                || country.equalsIgnoreCase("CN")
+                || country.equalsIgnoreCase("PRC")) {
             return base + "-cn";
         }
 
@@ -354,12 +349,12 @@ public final class Hyacinthusclip {
     }
 
     private static void extractEntries(
-        final Map<String, URL> urls,
-        final PatchEntry[] patches,
-        final Path originalRootDir,
-        final Path repoDir,
-        final FileEntry[] entries,
-        final String targetName
+            final Map<String, URL> urls,
+            final PatchEntry[] patches,
+            final Path originalRootDir,
+            final Path repoDir,
+            final FileEntry[] entries,
+            final String targetName
     ) throws IOException {
         if (entries == null) {
             return;
@@ -378,10 +373,10 @@ public final class Hyacinthusclip {
     }
 
     private static void applyPatches(
-        final Map<String, Map<String, URL>> urls,
-        final PatchEntry @NotNull [] patches,
-        final Path originalJar,
-        final Path repoDir
+            final Map<String, Map<String, URL>> urls,
+            final PatchEntry @NotNull [] patches,
+            final Path originalJar,
+            final Path repoDir
     ) {
         if (patches.length == 0) {
             return;
