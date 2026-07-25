@@ -41,7 +41,7 @@ public final class MorninggloryClip {
     public static final String[] ALL_MAVEN_REPO_LINK_BASE = new String[]{
             "https://maven.aliyun.com/repository/central",
             "https://repo.papermc.io/repository/maven-public",
-            "https://repo.menthamc.org/repository/maven-public",
+            "https://repo.bacteriawa.com/repository/maven-public",
             "https://repo.spongepowered.org/maven",
     };
 

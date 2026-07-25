@@ -123,13 +123,13 @@ publishing {
 
         repositories {
             val url = if (isSnapshot) {
-                "https://repo.menthamc.org/repository/maven-snapshots/"
+                "https://repo.bacteriawa.com/repository/maven-snapshots/"
             } else {
-                "https://repo.menthamc.org/repository/maven-releases/"
+                "https://repo.bacteriawa.com/repository/maven-releases/"
             }
 
             maven(url) {
-                name = "MenthaMC"
+                name = "Bacteriawa"
                 credentials(PasswordCredentials::class) {
                     username = System.getenv("PRIVATE_MAVEN_REPO_USERNAME")
                     password = System.getenv("PRIVATE_MAVEN_REPO_PASSWORD")
