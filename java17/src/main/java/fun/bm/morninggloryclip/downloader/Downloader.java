@@ -1,8 +1,8 @@
 package fun.bm.morninggloryclip.downloader;
 
-import fun.bm.morninggloryclip.FileEntry;
-import fun.bm.morninggloryclip.MorninggloryClip;
-import fun.bm.morninggloryclip.Util;
+import io.papermc.paperclip.FileEntry;
+import io.papermc.paperclip.Paperclip;
+import io.papermc.paperclip.Util;
 import fun.bm.morninggloryclip.update.AutoUpdate;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +62,7 @@ public record Downloader(FileEntry entry, Path outputDir, Path outputFile, Strin
                 this.deleteIfInvalid();
 
                 final MavenDependencyResolver resolver = new MavenDependencyResolver(
-                        List.of(Arrays.stream(MorninggloryClip.ALL_MAVEN_REPO_LINK_BASE).map(url -> new MavenDependencyResolver.MavenRepository(String.valueOf(url.hashCode()), url)).toArray(MavenDependencyResolver.MavenRepository[]::new)),
+                        List.of(Arrays.stream(Paperclip.ALL_MAVEN_REPO_LINK_BASE).map(url -> new MavenDependencyResolver.MavenRepository(String.valueOf(url.hashCode()), url)).toArray(MavenDependencyResolver.MavenRepository[]::new)),
                         this.outputDir
                 );
 

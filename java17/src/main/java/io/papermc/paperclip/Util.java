@@ -1,4 +1,4 @@
-package fun.bm.morninggloryclip;
+package io.papermc.paperclip;
 
 import fun.bm.morninggloryclip.update.AutoUpdate;
 
@@ -10,9 +10,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class Util {
-
-    private Util() {
-    }
 
     public static MessageDigest sha256Digest = getSha256Digest();
 

@@ -1,4 +1,4 @@
-package fun.bm.morninggloryclip;
+package io.papermc.paperclip;
 
 import fun.bm.morninggloryclip.downloader.Downloader;
 import org.jetbrains.annotations.NotNull;
@@ -64,10 +64,10 @@ public record FileEntry(byte[] hash, String id, String path) {
             return CompletableFuture.completedFuture(null);
         }
 
-        MorninggloryClip.logger.info("Downloading missing file " + this.id + " to " + outputFile + " .");
+        Paperclip.logger.info("Downloading missing file " + this.id + " to " + outputFile + " .");
 
         final @NotNull CompletableFuture<Path> task = new Downloader(this, outputDir, outputFile, baseDir, originalRootDir, true)
-                .downloadOrLoad(MorninggloryClip.DOWNLOAD_EXECUTOR);
+                .downloadOrLoad(Paperclip.DOWNLOAD_EXECUTOR);
 
         return task.thenApply(ret -> {
             synchronized (urls) {

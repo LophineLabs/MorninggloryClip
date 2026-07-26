@@ -12,7 +12,7 @@ subprojects {
     }
 }
 
-val mainClass = "fun.bm.morninggloryclip.Main"
+val mainClass = "io.papermc.paperclip.Main"
 
 tasks.jar {
     val java6Jar = project(":java6").tasks.named("jar")

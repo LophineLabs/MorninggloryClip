@@ -7,7 +7,7 @@
  * MIT License
  */
 
-package fun.bm.morninggloryclip;
+package io.papermc.paperclip;
 
 import java.lang.reflect.Method;
 
@@ -16,13 +16,13 @@ public final class Main {
     public static void main(final String[] args) {
         if (getJavaVersion() < 25) {
             System.err.println("Minecraft 26.1 and newer requires running the server with Java 25 or above. " +
-                "For information on how to update Java, see https://docs.papermc.io/misc/java-install");
+                    "For information on how to update Java, see https://docs.papermc.io/misc/java-install");
             System.exit(1);
         }
 
         try {
-            final Class<?> clipClass = Class.forName("fun.bm.morninggloryclip.MorninggloryClip");
-            final Method mainMethod = clipClass.getMethod("main", String[].class);
+            final Class<?> paperclipClass = Class.forName("io.papermc.paperclip.Paperclip");
+            final Method mainMethod = paperclipClass.getMethod("main", String[].class);
             mainMethod.invoke(null, (Object) args);
         } catch (final Exception e) {
             e.printStackTrace();

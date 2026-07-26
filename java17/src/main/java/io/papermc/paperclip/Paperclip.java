@@ -1,5 +1,6 @@
-package fun.bm.morninggloryclip;
+package io.papermc.paperclip;
 
+import fun.bm.morninggloryclip.IPUtil;
 import fun.bm.morninggloryclip.update.AutoUpdate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public final class MorninggloryClip {
+public final class Paperclip {
     private static final boolean ENABLE_LEAVES_PLUGIN =
             Boolean.getBoolean("morninggloryclip.enable.mixin");
 
@@ -83,8 +84,8 @@ public final class MorninggloryClip {
             final URL[] classpathUrls = Arrays.copyOf(setupClasspathUrls, setupClasspathUrls.length + MixinJarResolver.jarUrls.length);
             System.arraycopy(MixinJarResolver.jarUrls, 0, classpathUrls, setupClasspathUrls.length, MixinJarResolver.jarUrls.length);
 
-            final ClassLoader parentClassLoader = MorninggloryClip.class.getClassLoader();
-            MixinServiceKnot.classLoader = MorninggloryClip.class.getClassLoader();
+            final ClassLoader parentClassLoader = Paperclip.class.getClassLoader();
+            MixinServiceKnot.classLoader = Paperclip.class.getClassLoader();
 
             MixinBootstrap.init();
             MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.SERVER);
@@ -110,7 +111,7 @@ public final class MorninggloryClip {
 
             return createdClassLoader;
         } else {
-            return new URLClassLoader(setupClasspathUrls, MorninggloryClip.class.getClassLoader().getParent());
+            return new URLClassLoader(setupClasspathUrls, Paperclip.class.getClassLoader().getParent());
         }
     }
 

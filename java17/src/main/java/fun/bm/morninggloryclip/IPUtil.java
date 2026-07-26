@@ -12,8 +12,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-class IPUtil {
-    protected static String getCountryByIp() {
+public class IPUtil {
+    public static String getCountryByIp() {
         final long timeout = Long.getLong("morninggloryclip.getCountryTimeout", 5) * 1000;
         HttpClient client = HttpClient.newHttpClient();
         ExecutorService executor = Executors.newFixedThreadPool(IpApi.values().length);

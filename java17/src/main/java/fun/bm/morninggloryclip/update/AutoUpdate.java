@@ -1,6 +1,6 @@
 package fun.bm.morninggloryclip.update;
 
-import fun.bm.morninggloryclip.MorninggloryClip;
+import io.papermc.paperclip.Paperclip;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -41,7 +41,7 @@ public final class AutoUpdate {
 
             final Path jarPath = Path.of(configuredPath.trim()).toAbsolutePath().normalize();
             if (!Files.isRegularFile(jarPath)) {
-                MorninggloryClip.logger.error("The specified auto-update jar {} does not exist.", jarPath);
+                Paperclip.logger.error("The specified auto-update jar {} does not exist.", jarPath);
                 System.exit(1);
             }
 
@@ -53,13 +53,13 @@ public final class AutoUpdate {
             useAutoUpdateJar = true;
 
             if (!detectionMorninggloryClipVersion()) {
-                MorninggloryClip.logger.error("MorninggloryClip version detection in auto-update jar {} failed.", jarPath);
+                Paperclip.logger.error("MorninggloryClip version detection in auto-update jar {} failed.", jarPath);
                 System.exit(1);
             }
 
-            MorninggloryClip.logger.info("Using auto-update target jar {}", jarPath);
+            Paperclip.logger.info("Using auto-update target jar {}", jarPath);
         } catch (IOException e) {
-            MorninggloryClip.logger.error("Failed to read core path file.", e);
+            Paperclip.logger.error("Failed to read core path file.", e);
             System.exit(1);
         }
     }
@@ -81,7 +81,7 @@ public final class AutoUpdate {
                 return new ByteArrayInputStream(stream.readAllBytes());
             }
         } catch (IOException e) {
-            MorninggloryClip.logger.error(e, "Failed to get resource {} from target jar {}.", resourcePath, autoUpdateCorePath);
+            Paperclip.logger.error(e, "Failed to get resource {} from target jar {}.", resourcePath, autoUpdateCorePath);
             return null;
         }
     }
@@ -126,11 +126,11 @@ public final class AutoUpdate {
 
     private static Path getCurrentLauncherJarPath() {
         try {
-            if (MorninggloryClip.class.getProtectionDomain().getCodeSource() == null) {
+            if (Paperclip.class.getProtectionDomain().getCodeSource() == null) {
                 return null;
             }
 
-            return Path.of(MorninggloryClip.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+            return Path.of(Paperclip.class.getProtectionDomain().getCodeSource().getLocation().toURI())
                     .toAbsolutePath()
                     .normalize();
         } catch (URISyntaxException | IllegalArgumentException e) {

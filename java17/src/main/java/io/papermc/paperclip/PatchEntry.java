@@ -7,7 +7,7 @@
  * MIT License
  */
 
-package fun.bm.morninggloryclip;
+package io.papermc.paperclip;
 
 import fun.bm.morninggloryclip.update.AutoUpdate;
 import io.sigpipe.jbsdiff.InvalidHeaderException;
