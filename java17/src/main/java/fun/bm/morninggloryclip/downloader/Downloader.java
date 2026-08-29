@@ -49,7 +49,7 @@ public record Downloader(FileEntry entry, Path outputDir, Path outputFile, Strin
                     logger.info("Located target jar inside jar, loading.");
                     this.deleteIfInvalid();
                     this.write(fileStream);
-                    logger.info("Loaded " + this.entry.id() + "from jar package locally.");
+                    logger.info("Loaded " + this.entry.id() + " from jar package locally.");
                     return this.outputFile;
                 }
             } catch (Exception ex) {
