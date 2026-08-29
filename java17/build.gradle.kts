@@ -1,3 +1,5 @@
+import org.gradle.api.file.DuplicatesStrategy
+
 plugins {
     java
     id("com.gradleup.shadow") version "9.4.1"
@@ -36,6 +38,10 @@ dependencies {
 }
 
 tasks.shadowJar {
+    // ServiceLoader descriptors must follow relocated Mixin interfaces/classes.
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    mergeServiceFiles()
+
     val prefix = "morninggloryclip.libs"
     listOf(
         "org.apache",
