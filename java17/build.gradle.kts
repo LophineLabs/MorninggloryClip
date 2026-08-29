@@ -36,20 +36,6 @@ dependencies {
 }
 
 tasks.shadowJar {
-    val prefix = "morninggloryclip.libs"
-    listOf(
-        "org.apache",
-        "org.tukaani",
-        "io.sigpipe",
-        "com.google",
-        "org.spongepowered",
-        "org.leavesmc",
-        "net.fabricmc.accesswidener",
-        "io.github.llamalad7"
-    ).forEach { pack ->
-        relocate(pack, "$prefix.$pack")
-    }
-
     exclude("META-INF/LICENSE.txt")
     exclude("META-INF/NOTICE.txt")
 }
