@@ -126,6 +126,12 @@ public final class Paperclip {
             } catch (final Throwable t) {
                 throw Util.sneakyThrow(t);
             }
+            if (Boolean.getBoolean("morninggloryclip.server.restart")) {
+                System.setProperty("morninggloryclip.server.restart", "false");
+                logger.info("Restarting server called by server thread.");
+                final Thread newThread = generateThread(args, mainClassName, classLoader);
+                newThread.start();
+            }
         }, "ServerMain");
 
         runThread.setContextClassLoader(classLoader);
