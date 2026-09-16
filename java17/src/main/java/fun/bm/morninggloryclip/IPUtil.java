@@ -92,7 +92,7 @@ public class IPUtil {
     }
 
     private enum IpApi {
-        IPINFO("http://ipinfo.io/country", String::trim),
+        IPINFO("https://ipinfo.io/country", String::trim),
         IP_API("http://ip-api.com/json/?fields=country", string -> {
             JsonObject json = JsonParser.parseString(string).getAsJsonObject();
             return json.get("country").getAsString();
