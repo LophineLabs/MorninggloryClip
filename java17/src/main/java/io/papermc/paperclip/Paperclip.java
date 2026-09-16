@@ -65,7 +65,7 @@ public final class Paperclip {
         final ClassLoader classLoader = getClassLoaderForLaunch(setupClasspathUrls);
 
         logger.info("Calling main method in server main class: " + mainClassName);
-        final Thread runThread = generateThread(args, mainClassName, classLoader);
+        final Thread runThread = generateThread(args, mainClassName, classLoader, 1);
         runThread.start();
     }
 
@@ -115,7 +115,7 @@ public final class Paperclip {
         }
     }
 
-    private static @NotNull Thread generateThread(Object args, String mainClassName, ClassLoader classLoader) {
+    private static @NotNull Thread generateThread(Object args, String mainClassName, ClassLoader classLoader, int threadCount) {
         final Thread runThread = new Thread(() -> {
             try {
                 final Class mainClass = Class.forName(mainClassName, true, classLoader);
@@ -129,10 +129,10 @@ public final class Paperclip {
             if (Boolean.getBoolean("morninggloryclip.server.restart")) {
                 System.setProperty("morninggloryclip.server.restart", "false");
                 logger.info("Restarting server called by server thread.");
-                final Thread newThread = generateThread(args, mainClassName, classLoader);
+                final Thread newThread = generateThread(args, mainClassName, classLoader, threadCount + 1);
                 newThread.start();
             }
-        }, "ServerMain");
+        }, "ServerMain#" + threadCount);
 
         runThread.setContextClassLoader(classLoader);
 
