@@ -11,7 +11,15 @@ import java.util.Arrays;
 
 public class Util {
 
+    /**
+     * @deprecated {@link MessageDigest} is not thread-safe, use {@link #newSha256Digest()}
+     */
+    @Deprecated
     public static MessageDigest sha256Digest = getSha256Digest();
+
+    public static MessageDigest newSha256Digest() {
+        return getSha256Digest();
+    }
 
     private static MessageDigest getSha256Digest() {
         try {
@@ -72,15 +80,30 @@ public class Util {
     }
 
     static boolean isDataValid(final byte[] data, final byte[] hash) {
-        return Arrays.equals(hash, sha256Digest.digest(data));
+        return Arrays.equals(hash, newSha256Digest().digest(data));
     }
 
-    static boolean isFileValid(final Path file, final byte[] hash) {
-        if (Files.exists(file)) {
-            final byte[] fileBytes = readBytes(file);
-            return isDataValid(fileBytes, hash);
+    public static boolean isFileValid(final Path file, final byte[] hash) {
+        if (!Files.isRegularFile(file)) {
+            return false;
         }
-        return false;
+        try {
+            return Arrays.equals(hash, sha256(file));
+        } catch (final IOException e) {
+            return false;
+        }
+    }
+
+    public static byte[] sha256(final Path file) throws IOException {
+        final MessageDigest digest = newSha256Digest();
+        try (final InputStream in = Files.newInputStream(file)) {
+            final byte[] buffer = new byte[64 * 1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                digest.update(buffer, 0, read);
+            }
+        }
+        return digest.digest();
     }
 
     static byte[] fromHex(final String s) {

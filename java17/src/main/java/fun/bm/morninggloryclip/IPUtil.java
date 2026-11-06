@@ -13,6 +13,31 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class IPUtil {
+    private static volatile String cachedCountry;
+
+    /**
+     * Same as {@link #getCountryByIp()}, but only looks up once per launch.
+     */
+    public static String getCountry() {
+        String country = cachedCountry;
+        if (country == null) {
+            synchronized (IPUtil.class) {
+                country = cachedCountry;
+                if (country == null) {
+                    country = cachedCountry = getCountryByIp();
+                }
+            }
+        }
+        return country;
+    }
+
+    public static boolean isChina() {
+        final String country = getCountry();
+        return country.equalsIgnoreCase("China")
+                || country.equalsIgnoreCase("CN")
+                || country.equalsIgnoreCase("PRC");
+    }
+
     public static String getCountryByIp() {
         final long timeout = Long.getLong("morninggloryclip.getCountryTimeout", 5) * 1000;
         HttpClient client = HttpClient.newHttpClient();

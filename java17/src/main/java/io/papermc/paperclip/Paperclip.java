@@ -38,14 +38,42 @@ public final class Paperclip {
     private static final boolean ENABLE_LEAVES_PLUGIN =
             Boolean.getBoolean("morninggloryclip.enable.mixin");
 
-    public static final String[] ALL_MAVEN_REPO_LINK_BASE = new String[]{
-            "https://maven.aliyun.com/repository/central",
-            "https://repo.papermc.io/repository/maven-public",
-            "https://repo.bacteriawa.com/repository/maven-public",
-            "https://repo.spongepowered.org/maven",
+    private static final String MAVEN_CENTRAL = "https://repo1.maven.org/maven2/";
+    private static final String MAVEN_CENTRAL_CN = "https://maven.aliyun.com/repository/central/";
+    private static final String[] EXTRA_MAVEN_REPOS = new String[]{
+            "https://repo.papermc.io/repository/maven-public/",
+            "https://repo.bacteriawa.com/repository/maven-public/",
+            "https://repo.spongepowered.org/maven/",
     };
+    private static volatile List<String> mavenRepositories;
 
-    public static final Executor DOWNLOAD_EXECUTOR = Executors.newCachedThreadPool();
+    public static List<String> getMavenRepositories() {
+        List<String> repos = mavenRepositories;
+        if (repos == null) {
+            synchronized (Paperclip.class) {
+                repos = mavenRepositories;
+                if (repos == null) {
+                    final boolean useMirror = !Boolean.getBoolean("morninggloryclip.useMojangSource") && IPUtil.isChina();
+                    final List<String> list = new ArrayList<>();
+                    if (useMirror) {
+                        list.add(MAVEN_CENTRAL_CN);
+                        Collections.addAll(list, EXTRA_MAVEN_REPOS);
+                        list.add(MAVEN_CENTRAL);
+                    } else {
+                        list.add(MAVEN_CENTRAL);
+                        Collections.addAll(list, EXTRA_MAVEN_REPOS);
+                    }
+                    repos = mavenRepositories = List.copyOf(list);
+                }
+            }
+        }
+        return repos;
+    }
+
+    public static final Executor DOWNLOAD_EXECUTOR = Executors.newFixedThreadPool(
+            Math.max(1, Integer.getInteger("morninggloryclip.downloadThreads", 8)),
+            Thread.ofPlatform().name("MorninggloryClip-Download-", 0).daemon(true).factory()
+    );
 
     public static final Logger logger = new SimpleLogger("MorninggloryClip");
 
@@ -237,10 +265,7 @@ public final class Paperclip {
             return customized;
         }
 
-        final String country = IPUtil.getCountryByIp();
-        if (country.equalsIgnoreCase("China")
-                || country.equalsIgnoreCase("CN")
-                || country.equalsIgnoreCase("PRC")) {
+        if (IPUtil.isChina()) {
             return base + "-cn";
         }
 

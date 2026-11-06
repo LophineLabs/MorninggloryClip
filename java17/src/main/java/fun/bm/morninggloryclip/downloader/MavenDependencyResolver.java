@@ -110,8 +110,13 @@ public class MavenDependencyResolver {
             this.groupId = parts[0];
             this.artifactId = parts[1];
             this.version = parts[2];
-            this.packaging = parts.length > 3 ? parts[3] : null;
-            this.classifier = parts.length > 4 ? parts[4] : null;
+            if (parts.length == 4 && !PACKAGING_TO_EXTENSION.containsKey(parts[3])) {
+                this.packaging = "jar";
+                this.classifier = parts[3];
+            } else {
+                this.packaging = parts.length > 3 ? parts[3] : null;
+                this.classifier = parts.length > 4 ? parts[4] : null;
+            }
             this.isSnapshot = version.endsWith("-SNAPSHOT");
         }
 

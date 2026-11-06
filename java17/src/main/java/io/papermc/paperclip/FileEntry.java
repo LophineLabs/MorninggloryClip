@@ -60,7 +60,9 @@ public record FileEntry(byte[] hash, String id, String path) {
 
         final Path outputFile = outputDir.resolve(this.path);
         if (Files.exists(outputFile) && Util.isFileValid(outputFile, this.hash)) {
-            urls.put(this.path, outputFile.toUri().toURL());
+            synchronized (urls) {
+                urls.put(this.path, outputFile.toUri().toURL());
+            }
             return CompletableFuture.completedFuture(null);
         }
 
